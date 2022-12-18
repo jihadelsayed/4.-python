@@ -21,7 +21,7 @@ def rectangleArea():
     width = float(input('Enter the width of a Rectangle: '))
     area = length * width
     return area
-#Pet Class Program
+Pet Class Program
 # Calling the main function
 if __name__ == "__main__":
     main()
