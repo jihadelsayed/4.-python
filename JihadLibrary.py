@@ -91,11 +91,13 @@ class JihadLibrary(object):
         needle = eIP
 
         try:
-            if needle.startswith("0x"):
+            #if needle.startswith("0x"):
+            if needle.startswith(""):
                 # Strip off '0x', convert to ASCII and reverse
                 needle = needle[2:]
                 needle = bytearray.fromhex(needle).decode("ascii")
                 needle = needle[::-1]
+                #return needle
         except (ValueError, TypeError) as e:
             print(e)
             raise
@@ -120,7 +122,7 @@ class JihadLibrary(object):
         else:
             payload = (character * totalCharacter).encode('ascii') 
                
-        return payload,totalCharacter
+        return payload, totalCharacter
     def generateMessage(self,payload):
         payload = input(colors.WARNING + "What is your message(default:anonymessage): " + colors.END) or "anonymessage"
         return payload
