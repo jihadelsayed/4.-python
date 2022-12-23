@@ -14,11 +14,6 @@ look at www.swapynet.com for more script
                                                                                                               
 """)
 
-# input number between 1 and 10
-
-# Display roman numeral of that number
-
-# if outside of the range display error
 
 # weight = mass * 9.8
 # mass in kilograms
