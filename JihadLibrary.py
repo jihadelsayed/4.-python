@@ -1,14 +1,16 @@
+import os
 import struct
+os.system('color')
 
 
 class JihadLibrary(object):
     def ip(self):
-        return input("What is the ip address(192.168.1.54): ") or "192.168.1.54"
+        return input(colors.BOLD +"What is the ip address(192.168.1.54): " + colors.END) or "192.168.1.54"
     def port(self):
-        return int(input("What is the the port(9999) : ") or "9999")
+        return int(input(colors.BOLD +"What is the the port(9999) : " + colors.END) or "9999")
 
     def copyRight(self):
-        print(""""
+        print(colors.HEADER + """"
             ____   __ __       ____  ____  __ __   ____  ___          ___  _           _____  ____  __ __    ___  ___   
             |    \ |  |  |     |    ||    ||  |  | /    ||   \        /  _]| |         / ___/ /    ||  |  |  /  _]|   \  
             |  o  )|  |  |     |__  | |  | |  |  ||  o  ||    \      /  [_ | |        (   \_ |  o  ||  |  | /  [_ |    \ 
@@ -17,7 +19,7 @@ class JihadLibrary(object):
             |     ||     |    \  `  | |  | |  |  ||  |  ||     |    |     ||     |     \    ||  |  ||     ||     ||     |
             |_____||____/      \____||____||__|__||__|__||_____|    |_____||_____|      \___||__|__||____/ |_____||_____|
             look at www.neetechs.com for more script
-            """)
+            """ + colors.END)
     def connectToSocket(self,socket, ip, port, s=None):
         if s is None:
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -27,31 +29,36 @@ class JihadLibrary(object):
         #s.send(bytes(buffer + "\r\n", "latin-1"))
         s.connect((ip, port))
         #s.bind((ip, port))
-        print(ip + ":" + str(port) + " has been connected")
+        print(colors.OkGreen + ip + ":" + str(port) + " has been connected" + colors.END)
         return s
     
     def receiveFromSocket(self,s):
         import time
-        print("Received: ")
+        print(colors.WARNING + "Received: " + colors.END)
         s.setblocking(1)	
         data = s.recv(1024)
         data = data.decode()
-        print(data)
+        print(f"{colors.OkCyan}       {data} {colors.END}")
         while True:
-            seeMore = input("Receive more(y/n)(default:n): ") or "n"
+            seeMore = input(colors.WARNING + "Receive more(y/n)(default:n): " + colors.END) or "n"
             if seeMore =="y":
+                print(colors.WARNING + "Received: " + colors.END)
                 data = s.recv(1024)
                 data = data.decode()
-                print(data)
+                print(f"{colors.OkCyan}       {data} {colors.END}")
                 time.sleep(0.5)
             else:
                 break
 
     def sendToSocket(self,s,message):
-        #receiver(s)
-        #s.send(payload)
-        #s.sendall(payload.encode('ascii'))
-        s.sendall(message)
+        #s.send(message)
+        isString = isinstance(message, str)
+        if isString:
+            s.sendall(message.encode('ascii'))
+        else:
+            s.send(message)
+        print(colors.OkGreen + "This message:" + message + "\n has been send successfully" + colors.END)
+        #s.sendall(message)
     # Create Pattern
     def createPattern(self,length):
         from string import ascii_uppercase, ascii_lowercase, digits
@@ -109,18 +116,22 @@ class JihadLibrary(object):
         totalCharacter = int(input("What is the number of character(9999) : ") or "9999")
         isAllRandom =  input("is all the character are random (yes): ") or "yes"
         if isAllRandom == "yes":
-            payload = [
-                b"TRUN /.:/",
-                JihadLibrary().createPattern(totalCharacter).encode('ascii') 
-            ]
-            
+            payload = JihadLibrary().createPattern(totalCharacter) 
         else:
-            payload = [
-                b"TRUN /.:/",
-                (character * totalCharacter).encode('ascii') 
-            ]
-
-        # get and print the value
-        payload = JihadLibrary().createPattern(totalCharacter)
-        return payload, totalCharacter
+            payload = (character * totalCharacter).encode('ascii') 
+               
+        return payload,totalCharacter
+    def generateMessage(self,payload):
+        payload = input(colors.WARNING + "What is your message(default:anonymessage): " + colors.END) or "anonymessage"
+        return payload
     
+class colors:
+    HEADER = '\033[95m'
+    OkBlue = '\033[94m'
+    OkCyan = '\033[96m'
+    OkGreen = '\033[92m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    END = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
